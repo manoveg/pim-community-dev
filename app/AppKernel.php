@@ -79,6 +79,11 @@ class AppKernel extends OroKernel
             new Pim\Bundle\EnrichBundle\PimEnrichBundle(),
             new Pim\Bundle\BaseConnectorBundle\PimBaseConnectorBundle(),
             new Pim\Bundle\TransformBundle\PimTransformBundle(),
+
+            // Add Bundles dependencies for pim-docs
+            new Pim\Bundle\CustomEntityBundle\PimCustomEntityBundle(),
+
+            // Demo bundles for pim-docs
             new Acme\Bundle\CatalogBundle\AcmeCatalogBundle(),
             new Acme\Bundle\DemoConnectorBundle\AcmeDemoConnectorBundle(),
             new Acme\Bundle\EnrichBundle\AcmeEnrichBundle(),
