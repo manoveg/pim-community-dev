@@ -82,6 +82,8 @@ class FixturesContext extends RawMinkContext
         $this->placeholderValues = array(
             '%tmp%' => getenv('BEHAT_TMPDIR') ?: '/tmp/pim-behat' ,
         );
+
+        echo "Temp dir: '" . $this->placeholderValues['%tmp%'] . "'\nDB: " . getenv('SYMFONY__DATABASE__NAME') . "\n";
     }
 
     /**
@@ -91,6 +93,8 @@ class FixturesContext extends RawMinkContext
     {
         $fs = new \Symfony\Component\Filesystem\Filesystem();
         $fs->remove($this->placeholderValues['%tmp%']);
+
+        echo "Removed temp dir '" . $this->placeholderValues['%tmp%'] . "' for DB '" . getenv('SYMFONY__DATABASE__NAME') . "'\n";
     }
 
     /**
@@ -873,7 +877,11 @@ class FixturesContext extends RawMinkContext
                 substr(md5(rand()), 0, 7)
             );
         @rmdir(dirname($filename));
+        echo "Directory '" . dirname($filename) . "' removed\n";
+
         @mkdir(dirname($filename), 0777, true);
+
+        echo "File to import written to '" . $filename . "'\n";
 
         file_put_contents($filename, (string) $string);
     }
@@ -1158,6 +1166,8 @@ class FixturesContext extends RawMinkContext
      */
     public function replacePlaceholders($value)
     {
+        echo "Replacing placeholders, '" . $value . "' now is '" . strtr($value, $this->placeholderValues) . "'\n";
+
         return strtr($value, $this->placeholderValues);
     }
 

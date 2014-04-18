@@ -1153,6 +1153,27 @@ class WebUser extends RawMinkContext
      */
     public function iExecuteTheJob($type)
     {
+        $url = explode('/', $this->getSession()->getCurrentUrl());
+        $id = end($url);
+        $jobInstance = $this->getFixturesContext()->getJobInstance(['id' => $id]);
+        $config = $jobInstance->getRawConfiguration();
+
+        if (isset($config['filePath'])) {
+            echo "Filepath for the job instance '" . $jobInstance->getCode() . "' is '" . $config['filePath'] . "'\n";
+            if (file_exists($config['filePath'])) {
+                echo "The file for the job instance '" . $jobInstance->getCode() . "' already exists\n";
+            }
+
+            if (is_dir(dirname($config['filePath']))) {
+                echo "The directory for the job instance '" . $jobInstance->getCode() . "' exists\n";
+            } else {
+                echo "The directory for the job instance '" . $jobInstance->getCode() . "' does not exist\n";
+            }
+
+        } else {
+            echo "No filepath found for the job instance '" . $jobInstance->getCode() . "'\n";
+        }
+
         $this->getPage(sprintf('%s show', ucfirst($type)))->execute();
     }
 
