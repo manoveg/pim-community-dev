@@ -12,7 +12,6 @@ use Pim\Bundle\CatalogBundle\Model\AbstractAttribute;
 use Pim\Bundle\CatalogBundle\Model\ProductInterface;
 use Pim\Bundle\CatalogBundle\Model\ProductValueInterface;
 use Pim\Bundle\CatalogBundle\Model\Association;
-use Pim\Bundle\CatalogBundle\Model\CategoryInterface;
 use Pim\Bundle\CatalogBundle\Repository\ProductRepositoryInterface;
 use Pim\Bundle\CatalogBundle\Model\AvailableAttributes;
 use Pim\Bundle\CatalogBundle\Builder\ProductBuilder;
@@ -92,16 +91,6 @@ class ProductManager
         $this->completenessManager = $completenessManager;
         $this->builder             = $builder;
         $this->repository          = $repo;
-    }
-
-    /**
-     * @deprecated Deprecated since version 1.1, to be removed in 1.2. Use getProductRepository
-     *
-     * @return ProductRepositoryInterface
-     */
-    public function getFlexibleRepository()
-    {
-        return $this->getProductRepository();
     }
 
     /**
@@ -226,12 +215,14 @@ class ProductManager
     {
         $this->objectManager->persist($product);
 
-        if ($flush) {
-            $this->objectManager->flush();
-        }
-        if ($schedule) {
+        if ($schedule || $recalculate) {
             $this->completenessManager->schedule($product);
         }
+
+        if ($recalculate || $flush) {
+            $this->objectManager->flush();
+        }
+
         if ($recalculate) {
             $this->completenessManager->generateMissingForProduct($product);
         }
@@ -283,16 +274,6 @@ class ProductManager
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @deprecated Deprecated since version 1.1, to be removed in 1.2. Use createProduct
-     */
-    public function createFlexible()
-    {
-        return $this->createProduct();
-    }
-
-    /**
      * Create a product value
      *
      * @return \Pim\Bundle\CatalogBundle\Model\ProductValueInterface
@@ -309,35 +290,13 @@ class ProductManager
     }
 
     /**
-     * Create a product value
-     *
-     * @return \Pim\Bundle\CatalogBundle\Model\ProductValueInterface
-     *
-     * @deprecated Deprecated since version 1.1, to be removed in 1.2. Use createProductvalue
-     */
-    public function createFlexibleValue()
-    {
-        return $this->createProductValue();
-    }
-
-    /**
      * Get product FQCN
      *
      * @return string
      */
     public function getProductName()
     {
-        return $this->configuration['flexible_class'];
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @deprecated Deprecated since version 1.1, to be removed in 1.2. Use getProductName
-     */
-    public function getFlexibleName()
-    {
-        return $this->getProductName();
+        return $this->configuration['product_class'];
     }
 
     /**
@@ -347,17 +306,7 @@ class ProductManager
      */
     public function getProductValueName()
     {
-        return $this->configuration['flexible_value_class'];
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @deprecated Deprecated since version 1.1, to be removed in 1.2. Use getProductValueName
-     */
-    public function getFlexibleValueName()
-    {
-        return $this->getProductValueName();
+        return $this->configuration['product_value_class'];
     }
 
     /**
@@ -510,52 +459,6 @@ class ProductManager
     public function getObjectManager()
     {
         return $this->objectManager;
-    }
-
-    /**
-     * Count products linked to a node.
-     * You can define if you just want to get the property of the actual node
-     * or with its children with the direct parameter
-     * The third parameter allow to include the actual node or not
-     *
-     * @param CategoryInterface $category   the requested category node
-     * @param boolean           $inChildren true to include children in count
-     * @param boolean           $inProvided true to include the provided none to count product
-     *
-     * @return integer
-     */
-    public function getProductsCountInCategory(CategoryInterface $category, $inChildren = false, $inProvided = true)
-    {
-        $categoryRepository = $this->getEntityManager()->getRepository(get_class($category));
-
-        $categoryQb = null;
-        if ($inChildren) {
-            $categoryQb = $categoryRepository->getAllChildrenQueryBuilder($category, $inProvided);
-        }
-
-        return $this->getProductRepository()->getProductsCountInCategory($category, $categoryQb);
-    }
-
-    /**
-     * Get product ids linked to a category or its children.
-     * You can define if you just want to get the property of the actual node or with its children with the direct
-     * parameter
-     *
-     * @param CategoryInterface $category   the requested node
-     * @param boolean           $inChildren true to take children not into account
-     *
-     * @return array
-     */
-    public function getProductIdsInCategory(CategoryInterface $category, $inChildren = false)
-    {
-        $categoryRepository = $this->getEntityManager()->getRepository(get_class($category));
-
-        $categoryQb = null;
-        if ($inChildren) {
-            $categoryQb = $categoryRepository->getAllChildrenQueryBuilder($category, true);
-        }
-
-        return $this->getProductRepository()->getProductIdsInCategory($category, $categoryQb);
     }
 
     /**

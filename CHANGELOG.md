@@ -1,25 +1,37 @@
-# 1.1.0 -
+# 1.2.0
+
+## Features
+- Add an option to automatically sort the choices of simple and multi select attributes
+
+## Improvements
+- Group datagrid filters by attribute groups
+
+## Bug fixes
+
+## BC breaks
+- Remove FlexibleEntityBundle
+
+# 1.1.0 - "Rabbit Punch" (2014-04-16)
 
 ## Features
 - Implement creating, updating, applying and removing datagrid views
-- Default product datagrid sorting is done descending on updated property
+- MongoDB storage support
 
 ## Improvements
-- Removed useless ```app/entities``` directory
-- Add a 'properties' field to the Attribute entity to allow easily adding new attribute type dependent properties
-- Introduced custom ODM types to map document to one or many entities
-- Define specific route and configuration for datagrid quick exports
-- MongoDB support (WIP)
 - Allow to add many quick export on datagrids
-- Add a parameter to ProductManager::save() and ProductManager::saveAll() to allow saving products without completeness recalculation
 - Optimize products mass deletion
 - Improve get product REST API
 - Improve entity history context display for entities updated during import jobs
+- Add a 'properties' field to the Attribute entity to allow easily adding new attribute type dependent properties
+- Introduced custom ODM types to map document to one or many entities
+- Define specific route and configuration for datagrid quick exports
+- Add a parameter to ProductManager::save() and ProductManager::saveAll() to allow saving products without completeness recalculation
 - Dispatch event pre/post handler for each mass action
 - Enhance the error message displayed when a related entity doesn't exist during an import (for instance we import products and a family doesn't exist)
+- Default product datagrid sorting is done descending on updated property
 
 ## Bug fixes
-- Fixed verbose option always used
+- Fixed the verbose option always used in the install command
 - Fixed issue on attribute option removal
 - Fixed identifier is required attribute
 - Fixed get common attributes with common values
@@ -29,12 +41,29 @@
 - Fixed the CSV import of attribute options which can fail due to missing columns when options are not 100% translated
 - Fixed the CSV import of attribute option to throw exception when the attribute is not known
 - Fixed the CSV export of attributes to avoid to export the virtual group 'Other'
-
-## Bug Fixes
 - Prevent considering 0 as a null value when importing metric data
-
-## Bug Fixes
-- Ensured attribute option validation
+- Ensured the attribute option validation when edit an option
+- Fixed the product CSV export when a metric attribute is exported without unit
+- Fixed the missed 'there are unsaved changes' message when I delete an option
+- Ensured the ability to change the user catalog locale from user fixtures
+- Fixed mass delete and pagination
+- Fixed the CSV import of family when an attribute does not exist
+- Fixed the CSV import of option when an attribute does not exist
+- Fixed the erroneous message on completeness tab to display "not yet calculated" instead of "locale non associated to this channel"
+- Fixed the 'null' displayed after a dynamic option creation
+- Fixed the quick Export to be able to export all the products
+- Ensured that we're able to configure the email to use in monolog handler
+- Fixed the missing translation keys
+- Fixed the route exception for less/address in prod.log
+- Fixed the categories tree get cut off on a long list on categiry management
+- Fixed the deletion of an attribute option
+- Remove the deprecated fallback property in locale and in locales.yml file
+- Avoid to recalculate the completeness when I add some products to one or more group with the mass-edit wizard
+- Fixed the unique attributes validation during product CSV imports
+- Fixed the exception on file_get_content if the image doesn't exist anymore
+- Ensure the required property for an identifier when importing attributes
+- Fixed the error message when the family is not known when importing products
+- Removed useless ```app/entities``` directory
 
 ## BC breaks
 - Add an argument HydratorInterface in ProductDatasource constructor (MongoDBODM support)
@@ -106,6 +135,8 @@
 - Move CatalogBundle\Model\CompletenessRepositoryInterface to CatalogBundle\Repository
 - EditCommonAttributes class needs the ProductBuilder and ProductMassActionManager now
 - Move prepareDBALQuery from ProductRepository to QueryBuilderUtility
+- Add a ProductCategoryManager and move here the methods getProductsCountInCategory, getProductIdsInCategory from the ProductManager
+- Renamed service writer ids `pim_base_connector.writer.orm.*` -> `pim_base_connector.writer.doctrine.*`
 
 # 1.0.2
 ## Bug Fixes

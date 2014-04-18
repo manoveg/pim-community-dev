@@ -79,7 +79,6 @@ services:
     pim_enrich.controller.locale:
         scope: request
         class: %pim_enrich.controller.locale.class%
-        parent: pim_enrich.controller.abstract_doctrine
 
     pim_enrich.controller.attribute:
         scope: request
@@ -104,6 +103,7 @@ services:
             - '@pim_user.context.user'
             - '@pim_versioning.manager.version'
             - '@oro_security.security_facade'
+            - '@pim_catalog.manager.product_category'
 
     pim_enrich.controller.association:
         class: %pim_enrich.controller.association.class%
@@ -144,7 +144,6 @@ services:
     pim_enrich.controller.media:
         scope: request
         class: %pim_enrich.controller.media.class%
-        parent: pim_enrich.controller.abstract_doctrine
         arguments:
             - '@liip_imagine'
             - '@liip_imagine.filter.manager'
